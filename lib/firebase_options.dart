@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'flutterfirebase-db9d6.appspot.com',
     iosBundleId: 'com.example.flutterfirebase',
   );
+
 }
