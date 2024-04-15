@@ -24,7 +24,7 @@ class NewUserPage extends StatelessWidget {
                 controller: nombreController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Nombre',
+                  labelText: 'Name',
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -32,7 +32,7 @@ class NewUserPage extends StatelessWidget {
                 controller: correoController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Correo',
+                  labelText: 'Email',
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -40,7 +40,7 @@ class NewUserPage extends StatelessWidget {
                 controller: telefonoController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Teléfono',
+                  labelText: 'Phone',
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -60,10 +60,10 @@ class NewUserPage extends StatelessWidget {
 
                   //agregar con un ID automatico
                   final respuesta =
-                      await instance.collection('usuarios').add(data);
+                      await instance.collection('Users').add(data);
 
                   // final respuesta = instance
-                  //             .collection('usuarios/123/asignatutas_asignadas')
+                  //             .collection('Users/Alumnos/Info')
                   //             .add(data);
 
                   // final respuesta = instance

@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -67,7 +68,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
+  
   final String title;
 
   @override
@@ -76,12 +77,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+  int? _draggedIndex; // Índice del perfil que está siendo arrastrado
+  double _draggedPositionX = 0.0; // Posición X del perfil arrastrado
   @override
   Widget build(BuildContext context) {
     // final users = firestore.collection('usuarios').get();
-    final users = firestore.collection('usuarios').snapshots();
-
+    final users = firestore.collection('Users').snapshots();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -92,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final listaUsuarios = snapshot.data!.docs; // La lista de documentos
-
+             
             return ListView.builder(
               itemCount: listaUsuarios.length,
               itemBuilder: (context, index) {
@@ -100,11 +101,58 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 // user.id;
 
-                return ListTile(
-                  title: Text(user['nombre']),
-                  subtitle: Text(user['correo']),
-                  trailing: Text('${user['telefono']}'),
-                );
+                  
+
+     return GestureDetector(
+            onHorizontalDragStart: (details) {
+              // Al inicio del arrastre, registra el índice del perfil arrastrado
+              setState(() {
+                _draggedIndex = index;
+              });
+            },
+            onHorizontalDragUpdate: (details) {
+              if (_draggedIndex != null) {
+                // Si hay un perfil arrastrado, actualiza su posición X
+                setState(() {
+                  _draggedPositionX += details.delta.dx;
+                });
+              }
+            },
+            onHorizontalDragEnd: (details) {
+              // Al final del arrastre
+              if (_draggedIndex != null) {
+                // Verifica si el perfil se ha arrastrado más allá de cierto umbral (por ejemplo, 50% de la pantalla)
+                if (_draggedPositionX.abs() > MediaQuery.of(context).size.width * 0.5) {
+                 
+                 print(user['nombre']);
+           
+           FirebaseFirestore.instance.collection('Users').where('nombre', isEqualTo:  user['nombre'])
+           .get().then((QuerySnapshot){
+            QuerySnapshot.docs.forEach((doc) {doc.reference.delete(); });
+           });
+
+
+           
+                }
+                // Reinicia el índice y la posición X
+                setState(() {
+                  _draggedIndex = null;
+                  _draggedPositionX = 0.0;
+                });
+              }
+            },
+  child: Transform.translate(
+     offset: Offset(index == _draggedIndex ? _draggedPositionX : 0, 0),
+    child: ListTile(
+      title: Text(user['nombre']),
+      subtitle: Text(user['correo']),
+      trailing: Text('${user['telefono']}'),
+    ),
+  ),
+);
+
+
+
               },
             );
           } else {
